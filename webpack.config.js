@@ -1,5 +1,8 @@
 const path = require('path');
+// 生成html文件
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+// 每次自动清理dist文件夹
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 module.exports = {
   mode: 'development',
@@ -21,6 +24,7 @@ module.exports = {
   plugins:[
     new HtmlWebpackPlugin({
       title: '管理输出'
-    })
+    }),
+    new CleanWebpackPlugin(),
   ]
 }

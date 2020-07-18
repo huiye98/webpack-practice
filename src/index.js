@@ -14,4 +14,4 @@ function greeter() {
   return greet;
 };
 
-document.querySelector("#root").appendChild(greeter());
+document.body.appendChild(greeter());
