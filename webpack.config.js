@@ -1,4 +1,5 @@
 const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
   mode: 'development',
@@ -16,5 +17,10 @@ module.exports = {
     inline: true, //实时刷新
     historyApiFallback: true, //不跳转，单页应用都跳转index.js
     port: '8080'
-  }
+  },
+  plugins:[
+    new HtmlWebpackPlugin({
+      title: '管理输出'
+    })
+  ]
 }
