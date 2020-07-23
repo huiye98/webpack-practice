@@ -86,3 +86,22 @@ module.exports = {
     }),
   ]
 }
+
+// webpack命令中使用：
+// webpack --env.NODE_ENV=local --env.production --progress
+
+// 将module.export包装成函数，使用环境变量env
+
+// module.exports = env => {
+//   // Use env.<YOUR VARIABLE> here:
+//   console.log('NODE_ENV: ', env.NODE_ENV); // 'local'
+//   console.log('Production: ', env.production); // true
+
+//   return {
+//     entry: './src/index.js',
+//     output: {
+//       filename: 'bundle.js',
+//       path: path.resolve(__dirname, 'dist'),
+//     },
+//   };
+// };
