@@ -1,2 +1,8 @@
 # webpack-practice
-文章学习与练习：https://www.jianshu.com/p/42e11515c10f
+参考自官网教程
+
+发布
+npm publish --access=public
+
+登录
+npm adduser 

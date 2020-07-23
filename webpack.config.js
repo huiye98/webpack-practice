@@ -1,30 +1,37 @@
 const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const devMode = process.env.NODE_ENV !== 'production';
 
 module.exports = {
-  mode: 'production',
-  devtool: 'eval-source-map',
-  entry:{
-    app: './src/index.js',
+  mode: 'development',
+  devtool: 'source-map',
+  entry: './src/index.js',
+  output: {
+    path: path.resolve(__dirname, 'dist'),
+    filename: 'webpack-numbers.js',
+    // 兼容不同的环境，例如 CommonJS，AMD，Node.js 或者作为一个全局变量
+    // 将你的 library bundle 暴露为名为 webpackNumbers 的全局变量, consumer 通过此名称来 import
+    library: 'webpackNumbers',
+    // 有以下几种方式暴露 library：(不指定则默认为var)
+        // 变量：作为一个全局变量，通过 script 标签来访问（libraryTarget:'var'）。
+        // this：通过 this 对象访问（libraryTarget:'this'）。
+        // window：在浏览器中通过 window 对象访问（libraryTarget:'window'）。
+        // UMD：在 AMD 或 CommonJS require 之后可访问（libraryTarget:'umd'）。
+    libraryTarget: 'umd',
   },
-  output:{
-    path:  path.resolve(__dirname, 'dist'),
-    // 文件内容变化后文件名随之发生改变，以确保不使用缓存
-    filename: '[name].[contenthash].js',
-  },
-  devServer:{
-    contentBase:"./dist", //将 dist 目录下的文件 serve 到 localhost:8080 下。（将资源作为 server 的可访问文件）
-    inline: true, //实时刷新
-    historyApiFallback: true, //不跳转，单页应用都跳转index.js
-    port: '8080'
+  externals:{
+    // library 需要一个名为 lodash 的依赖，这个依赖在 consumer 环境中必须存在且可用。
+    lodash:{
+      commonjs: 'lodash',
+      commonjs2: 'lodash',
+      amd: 'lodash',
+      root: '_',
+    }
   },
   optimization:{
     moduleIds: 'hashed', // 保证修改依赖但vendors的hash不会变化
     // 为所有 chunk 创建一个 runtime bundle
-    runtimeChunk: 'single',
+    runtimeChunk: true,
     splitChunks: {
       cacheGroups: {
         vendor: {
@@ -32,57 +39,13 @@ module.exports = {
           name: 'vendors',
           chunks: 'all',
         },
-        // 将所有css放在同一个文件中
-        styles: {
-          name: 'styles',
-          test: /\.css$/,
-          chunks: 'all',
-          enforce: true,
-        },
       },
     },
   },
-  module:{
-    rules: [
-      {
-        test: /\.(sa|sc|c)ss$/,
-        use: [
-          {
-            loader: MiniCssExtractPlugin.loader,
-            options: {
-              publicPath: (resourcePath, context) => {
-                return path.relative(path.dirname(resourcePath), context) + '/';
-              },
-              hmr: devMode,
-              reloadAll: true,
-            },
-          },
-          'css-loader',
-          {
-            loader: `postcss-loader`,
-            options: {
-              options: {},
-            }
-          },
-          'sass-loader',
-        ],
-      },
-    ],
-  },
   plugins:[
-    // 生成html文件
-    new HtmlWebpackPlugin({
-      title: '缓存'
-    }),
     new CleanWebpackPlugin({
       // 每次自动清理dist文件夹
       cleanStaleWebpackAssets: false,
-    }),
-    new MiniCssExtractPlugin({
-      // the css order warnings can be disabled by setting the ignoreOrder flag to true for the plugin.
-      ignoreOrder: true,
-      filename: devMode ? '[name].css' : '[name].[contenthash].css',
-      chunkFilename: devMode ? '[id].css' : '[id].[contenthash].css',
-    }),
+    })
   ]
 }
